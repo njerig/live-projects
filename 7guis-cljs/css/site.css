@@ -1,0 +1,137 @@
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  max-width: 600px;
+  margin: 0 auto;
+  padding-top: 72px;
+  -webkit-font-smoothing: antialiased;
+  font-size: 1.125em;
+  background-color: #000;
+  color: #fff;
+  line-height: 1.5em;
+}
+
+h1, h2, h3 {
+  color: #fff;
+}
+h1 {
+  font-size: 2.5em;
+  margin-bottom: 1.5em;
+}
+
+h2 {
+  font-size: 2em;
+  margin-bottom: 1em;
+}
+
+h3 {
+  font-size: 1.5em
+}
+
+a {
+  text-decoration: none;
+  color: #09f;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+div.gooeys > div {
+  margin: 1em 0;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+div.gooeys > div h2 {
+  margin: 0 0 1em 0;
+}
+
+div.counter-section { background-color: #C1301C; }
+div.temperature-converter-section { background-color: #C96112; }
+div.flight-booker-section { background-color: #C4A705; }
+div.timer-section { background-color: #177245; }
+div.crud-section { background-color: #189dcd; }
+div.circle-drawer-section { background-color: #5d6fd3; }
+div.cells-section { background-color: #9400D3; }
+
+.flight-booker-section form select, .flight-booker-section form input {
+  display: block;
+}
+
+div.timer-section div { width: 80%; }
+div.timer-section div div { display: flex; }
+div.timer-section div div div { width: 115px; }
+div.timer-section div div meter,
+div.timer-section div div input { flex-grow: 1; }
+
+div.crud-section > div { 
+  display: flex;
+  margin-top: 1em;
+}
+div.crud-section label { margin-right: 10px; }
+div.crud-section select { width: 100%; }
+
+div.circle-drawer-section circle:hover {
+  fill: #d3d3d3;
+}
+
+.popup {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+#menu {
+  background-color: rgb(211, 211, 211);
+  color: rgb(0, 0, 0);
+  border: 1px solid rgb(128, 128, 128);
+  font-size: 12px;
+  cursor: default;
+}
+
+#menu ul { 
+  padding-inline-start: 0;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  list-style: none;
+}
+
+#menu li {
+  padding: 0 5px;
+}
+
+#menu li:hover {
+  background-color: rgb(0, 0, 255);
+  color: rgb(255, 255, 255);
+}
+
+#adjust {
+  background-color: rgb(180, 180, 180);
+  color: rgb(0, 0, 0);
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid rgb(0, 0, 0);
+}
+
+#adjust button {
+  float: right;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 3px;
+  line-height: 0.9;
+  background: transparent no-repeat;
+  border: none;
+  cursor: pointer;
+}
+
+#adjust button:focus {
+  border: none;
+  outline: none;
+  background: transparent no-repeat;
+}
+
+#adjust input { cursor: pointer }
