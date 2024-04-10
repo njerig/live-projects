@@ -40,7 +40,7 @@ let planetaryData = {
     },
     "venus": {
         mass: "4.87",
-        diameter: "12,104",
+        diameter: "12104",
         density: "5243",
         gravity: "8.9",
         escapeVelocity: "10.4",
@@ -62,7 +62,7 @@ let planetaryData = {
     },
     "earth": {
         mass: "5.97",
-        diameter: "12,756",
+        diameter: "12756",
         density: "5514",
         gravity: "9.8",
         escapeVelocity: "11.2",
@@ -93,8 +93,8 @@ let planetaryData = {
         distanceFromSun: "0.384*",
         perihelion: "0.363*",
         aphelion: "0.406*",
-        orbitalPeriod: "27.3*",
-        orbitalVelocity: "1.0*",
+        orbitalPeriod: "27.3",
+        orbitalVelocity: "1.0",
         orbitalInclination: "5.1",
         orbitalEccentricity: "0.055",
         obliquityToOrbit: "6.7",
@@ -150,7 +150,7 @@ let planetaryData = {
     },
     "saturn": {
         mass: "568",
-        diameter: "120,536",
+        diameter: "120536",
         density: "687",
         gravity: "9.0",
         escapeVelocity: "35.5",
@@ -172,7 +172,7 @@ let planetaryData = {
     },
     "uranus": {
         mass: "86.8",
-        diameter: "51,118",
+        diameter: "51118",
         density: "1270",
         gravity: "8.7",
         escapeVelocity: "21.3",
@@ -181,7 +181,7 @@ let planetaryData = {
         distanceFromSun: "2867.0",
         perihelion: "2732.7",
         aphelion: "3001.4",
-        orbitalPeriod: "30,589",
+        orbitalPeriod: "30589",
         orbitalVelocity: "6.8",
         orbitalInclination: "0.8",
         orbitalEccentricity: "0.047",
@@ -194,7 +194,7 @@ let planetaryData = {
     },
     "neptune": {
         mass: "102",
-        diameter: "49,528",
+        diameter: "49528",
         density: "1638",
         gravity: "11.0",
         escapeVelocity: "23.5",
@@ -225,7 +225,7 @@ let planetaryData = {
         distanceFromSun: "5906.4",
         perihelion: "4436.8",
         aphelion: "7375.9",
-        orbitalPeriod: "90,560",
+        orbitalPeriod: "90560",
         orbitalVelocity: "4.7",
         orbitalInclination: "17.2",
         orbitalEccentricity: "0.244",
@@ -258,6 +258,8 @@ function createCard(planet) {
     }
     image.src += `${planet}.jpg`;
     image.alt = makeTitleFromKey(planet) + " Picture";
+    const cardContent = document.createElement("div");
+    cardContent.classList.add("card-content");
     const cardHeader = document.createElement("h2");
     cardHeader.textContent = planet.charAt(0).toUpperCase() + planet.slice(1);
     const cardDetails = document.createElement("ul");
@@ -268,54 +270,54 @@ function createCard(planet) {
         let unit = "";
         switch (key) {
             case "mass":
-                unit = " x 10<sup>24</sup> kg";
+                unit = "x 10<sup>24</sup> kg";
                 break;
             case "diameter":
             case "distanceFromSun":
             case "perihelion":
             case "aphelion":
-                unit = " km";
+                unit = "km";
                 break;
             case "density":
-                unit = " kg/m<sup>3</sup>";
+                unit = "kg/m<sup>3</sup>";
                 break;
             case "gravity":
-                unit = " m/s<sup>2</sup>";
+                unit = "m/s<sup>2</sup>";
                 break;
             case "escapeVelocity":
             case "orbitalVelocity":
-                unit = " km/s";
+                unit = "km/s";
                 break;
             case "rotationPeriod":
             case "dayLength":
-                unit = " hours";
+                unit = "hours";
                 break;
             case "orbitalPeriod":
-                unit = " days";
+                unit = "days";
                 break;
             case "orbitalInclination":
             case "obliquityToOrbit":
-                unit = " degrees";
+                unit = "degrees";
                 break;
             case "meanTemperature":
-                unit = " degrees Celsius";
+                unit = "degrees Celsius";
                 break;
             case "surfacePressure":
-                unit = " bars";
+                unit = "bars";
                 break;
             case "moonCount":
-                unit = "";
                 break;
             case "hasRingSystem":
             case "hasGlobalMagneticField":
                 value = value ? "Yes" : "No";
                 break;
         }
-        detail.innerHTML = `<b>${title}</b>: ${value} ${unit}`;
+        detail.innerHTML = `<b>${title}${unit ? " (" + unit + ")" : ""}</b>: ${value}`;
         cardDetails.appendChild(detail);
         card.appendChild(image);
-        card.appendChild(cardHeader);
-        card.appendChild(cardDetails);
+        cardContent.appendChild(cardHeader);
+        cardContent.appendChild(cardDetails);
+        card.appendChild(cardContent);
         cardContainer.appendChild(card);
     }
 }
@@ -329,8 +331,43 @@ function addCards() {
     }
 }
 
-// This calls the addCards() function when the page is first loaded
+// Add moon toggle filter
+function addMoonToggle() {
+    const filterOptions = document.getElementById("filterOptions");
+    const moonFieldset = document.createElement("fieldset");
+    const moonLegend = document.createElement("legend");
+    moonLegend.textContent = "Moon";
+    moonFieldset.appendChild(moonLegend);
+    const moonCheckbox = document.createElement("input");
+    moonCheckbox.type = "checkbox";
+    moonCheckbox.id = "toggleMoon";
+    moonCheckbox.checked = true;
+    const moonCheckboxLabel = document.createElement("label");
+    moonCheckboxLabel.htmlFor = "toggleMoon";
+    moonCheckboxLabel.textContent = "Show";
+    moonCheckbox.addEventListener('change', toggleMoonCard);
+    moonFieldset.appendChild(moonCheckbox);
+    moonFieldset.appendChild(moonCheckboxLabel);
+    filterOptions.appendChild(moonFieldset);
+}
+
+// Adds filters to filterOptions
+function addFilters() {
+    addMoonToggle();
+}
+
+function toggleFilterOptions() {
+    const filterOptions = document.getElementById("filterOptions");
+    if (filterOptions.style.display === "none") {
+        filterOptions.style.display = "block";
+    } else {
+        filterOptions.style.display = "none";
+    }
+}
+
+// This adds cards and filters when the page is first loaded
 document.addEventListener("DOMContentLoaded", addCards);
+document.addEventListener("DOMContentLoaded", addFilters);
 
 function toggleMoonCard() {
     if (!planetaryData["moon"]) {
@@ -359,5 +396,5 @@ function toggleMoonCard() {
     } else {
         delete planetaryData["moon"];
     }
-    showCards(); // Refresh the cards to reflect the change
+    addCards(); // Refresh the cards to reflect the change
 }
