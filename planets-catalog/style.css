@@ -51,7 +51,7 @@ body { max-width: 100%;}
 .footer {
     display: flex;
     justify-content: center;
-    background-color: rgba(0, 0, 0, .3);
+    background-color: lightgray;
     padding: 10px;
 }
 
