@@ -36,7 +36,7 @@ let planetaryData = {
         surfacePressure: "0",
         moonCount: "0",
         hasRingSystem: false,
-        hasGlobalMagenticField: true,
+        hasGlobalMagneticField: true,
     },
     "venus": {
         mass: "4.87",
@@ -58,7 +58,7 @@ let planetaryData = {
         surfacePressure: "92",
         moonCount: "0",
         hasRingSystem: false,
-        hasGlobalMagenticField: false,
+        hasGlobalMagneticField: false,
     },
     "earth": {
         mass: "5.97",
@@ -80,7 +80,7 @@ let planetaryData = {
         surfacePressure: "1",
         moonCount: "1",
         hasRingSystem: false,
-        hasGlobalMagenticField: true,
+        hasGlobalMagneticField: true,
     },
     "moon": {
         mass: "0.073",
@@ -102,7 +102,7 @@ let planetaryData = {
         surfacePressure: "0",
         moonCount: "0",
         hasRingSystem: false,
-        hasGlobalMagenticField: false,
+        hasGlobalMagneticField: false,
     },
     "mars": {
         mass: "0.642",
@@ -124,7 +124,7 @@ let planetaryData = {
         surfacePressure: "0.01",
         moonCount: "2",
         hasRingSystem: false,
-        hasGlobalMagenticField: false,
+        hasGlobalMagneticField: false,
     },
     "jupiter": {
         mass: "1898",
@@ -146,7 +146,7 @@ let planetaryData = {
         surfacePressure: null,
         moonCount: "95",
         hasRingSystem: true,
-        hasGlobalMagenticField: true,
+        hasGlobalMagneticField: true,
     },
     "saturn": {
         mass: "568",
@@ -168,7 +168,7 @@ let planetaryData = {
         surfacePressure: null,
         moonCount: "146",
         hasRingSystem: true,
-        hasGlobalMagenticField: true,
+        hasGlobalMagneticField: true,
     },
     "uranus": {
         mass: "86.8",
@@ -190,7 +190,7 @@ let planetaryData = {
         surfacePressure: null,
         moonCount: "28",
         hasRingSystem: true,
-        hasGlobalMagenticField: true,
+        hasGlobalMagneticField: true,
     },
     "neptune": {
         mass: "102",
@@ -212,7 +212,7 @@ let planetaryData = {
         surfacePressure: null,
         moonCount: "16",
         hasRingSystem: true,
-        hasGlobalMagenticField: true,
+        hasGlobalMagneticField: true,
     },
     "pluto": {
         mass: "0.0130",
@@ -321,7 +321,7 @@ function createCard(planet) {
 }
 
 // This function adds cards the page to display the data in the object
-function showCards() {
+function addCards() {
     const cardContainer = document.getElementById("card-container");
     cardContainer.innerHTML = "";
     for (let planet in planetaryData) {
@@ -330,7 +330,7 @@ function showCards() {
 }
 
 // This calls the addCards() function when the page is first loaded
-document.addEventListener("DOMContentLoaded", showCards);
+document.addEventListener("DOMContentLoaded", addCards);
 
 function toggleMoonCard() {
     if (!planetaryData["moon"]) {
