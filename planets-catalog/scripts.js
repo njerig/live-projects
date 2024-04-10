@@ -239,12 +239,29 @@ let planetaryData = {
 }
 
 function makeTitleFromKey(key) {
-    let title = key.replace(/([A-Z])/g, ' $1').replace(/^./, function(str){ return str.toUpperCase(); });
-    if (title.startsWith("Has ")) {
-        title.replace("Has ", "");
-        title += "?";
-    }
-    return title;
+    const titles = {
+        mass: "Mass (&times; 10<sup>24</sup> kg)",
+        diameter: "Diameter (km)",
+        density: "Density (kg/m<sup>3</sup>)",
+        gravity: "Gravity (m/s<sup>2</sup>)",
+        escapeVelocity: "Escape Velocity (km/s)",
+        rotationPeriod: "Rotation Period (hours)",
+        dayLength: "Day Length (hours)",
+        distanceFromSun: "Distance From Sun (&times; 10<sup>6</sup> km)",
+        perihelion: "Perihelion (&times; 10<sup>6</sup> km)",
+        aphelion: "Aphelion (&times; 10<sup>6</sup> km)",
+        orbitalPeriod: "Orbital Period (days)",
+        orbitalVelocity: "Orbital Velocity (km/s)",
+        orbitalInclination: "Orbital Inclination (&deg;)",
+        orbitalEccentricity: "Orbital Eccentricity",
+        obliquityToOrbit: "Obliquity To Orbit (&deg;)",
+        meanTemperature: "Mean Temperature (&deg; C)",
+        surfacePressure: "Surface Pressure (bars)",
+        moonCount: "Moon Count",
+        hasRingSystem: "Has Ring System",
+        hasGlobalMagneticField: "Has Global Magnetic Field"
+    };
+    return titles[key] || key.split(/(?=[A-Z])/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 }
 
 function createCard(planet) {
@@ -267,52 +284,10 @@ function createCard(planet) {
         const detail = document.createElement("li");
         const title = makeTitleFromKey(key);
         let value = planetaryData[planet][key];
-        let unit = "";
-        switch (key) {
-            case "mass":
-                unit = "x 10<sup>24</sup> kg";
-                break;
-            case "diameter":
-            case "distanceFromSun":
-            case "perihelion":
-            case "aphelion":
-                unit = "km";
-                break;
-            case "density":
-                unit = "kg/m<sup>3</sup>";
-                break;
-            case "gravity":
-                unit = "m/s<sup>2</sup>";
-                break;
-            case "escapeVelocity":
-            case "orbitalVelocity":
-                unit = "km/s";
-                break;
-            case "rotationPeriod":
-            case "dayLength":
-                unit = "hours";
-                break;
-            case "orbitalPeriod":
-                unit = "days";
-                break;
-            case "orbitalInclination":
-            case "obliquityToOrbit":
-                unit = "degrees";
-                break;
-            case "meanTemperature":
-                unit = "degrees Celsius";
-                break;
-            case "surfacePressure":
-                unit = "bars";
-                break;
-            case "moonCount":
-                break;
-            case "hasRingSystem":
-            case "hasGlobalMagneticField":
-                value = value ? "Yes" : "No";
-                break;
+        if (key === "hasRingSystem" || key === "hasGlobalMagneticField") {
+            value = value ? "Yes" : "No";
         }
-        detail.innerHTML = `<b>${title}${unit ? " (" + unit + ")" : ""}</b>: ${value}`;
+        detail.innerHTML = `<b>${title}</b>: ${value}`;
         cardDetails.appendChild(detail);
         card.appendChild(image);
         cardContent.appendChild(cardHeader);
@@ -323,10 +298,13 @@ function createCard(planet) {
 }
 
 // This function adds cards the page to display the data in the object
-function addCards() {
+function addCards(filterFunction = ([k, v]) => true) {
+    console.log(typeof filterFunction);
+    console.log(Object.entries(planetaryData).filter(filterFunction));
+    const planets = Object.entries(planetaryData).filter(filterFunction).map(([key]) => key);
     const cardContainer = document.getElementById("card-container");
     cardContainer.innerHTML = "";
-    for (let planet in planetaryData) {
+    for (let planet of planets) {
         createCard(planet);
     }
 }
@@ -351,9 +329,95 @@ function addMoonToggle() {
     filterOptions.appendChild(moonFieldset);
 }
 
+function createSlider(legendTitle, dataKey, data) {
+    const min = Math.min(...Object.values(data).map(value => parseFloat(value[dataKey])));
+    const max = Math.max(...Object.values(data).map(value => parseFloat(value[dataKey])));
+
+    const fieldSet = document.createElement("fieldset");
+    const legend = document.createElement("legend");
+    legend.innerHTML = legendTitle;
+    fieldSet.appendChild(legend);
+
+    const sliderLabel = document.createElement("label");
+    sliderLabel.classList.add("sliderLabel");
+    sliderLabel.textContent = `${min} - ${max}`;
+    fieldSet.appendChild(sliderLabel);
+
+    const slider = document.createElement("div");
+    slider.classList.add("slider");
+    
+    const createHandle = (initialPosition) => {
+        const handle = document.createElement("div");
+        handle.classList.add("handle");
+        handle.style.left = `${initialPosition}%`;
+        return handle;
+    };
+
+    // Create handles at both ends of the slider
+    const handle1 = createHandle(0); // Start at min (0%)
+    const handle2 = createHandle(100); // End at max (100%)
+    slider.appendChild(handle1);
+    slider.appendChild(handle2);
+    fieldSet.appendChild(slider);
+    const filterOptions = document.getElementById("filterOptions");
+    filterOptions.appendChild(fieldSet);
+
+    let isDragging1 = false;
+    let isDragging2 = false;
+
+    const updateHandlePosition = (handle, newLeft) => {
+        handle.style.left = `${newLeft}px`;
+        const valueRange = max - min;
+        const positionRatio = newLeft / (slider.offsetWidth - handle.offsetWidth);
+        const value = Math.round(min + (positionRatio * valueRange));
+        return value;
+    };
+
+    const onMouseMove = (event, handle, isDragging) => {
+        if (!isDragging) return;
+        const sliderRect = slider.getBoundingClientRect();
+        let newLeft = event.clientX - sliderRect.left - (handle.offsetWidth / 2);
+        newLeft = Math.max(0, newLeft);
+        newLeft = Math.min(slider.offsetWidth - handle.offsetWidth, newLeft);
+        return updateHandlePosition(handle, newLeft);
+    };
+
+    handle1.addEventListener('mousedown', () => isDragging1 = true);
+    handle2.addEventListener('mousedown', () => isDragging2 = true);
+
+    document.addEventListener('mousemove', (event) => {
+        let value1 = min, value2 = max;
+        if (isDragging1) {
+            value1 = onMouseMove(event, handle1, isDragging1);
+        }
+        if (isDragging2) {
+            value2 = onMouseMove(event, handle2, isDragging2);
+        }
+        if (isDragging1 || isDragging2) {
+            sliderLabel.textContent = `${value1} - ${value2}`; // Update the slider label with the new values
+            // Filter data based on the current values of the handles
+            addCards(([key, value]) => {
+                const dataValue = parseFloat(value[dataKey]);
+                return dataValue >= value1 && dataValue <= value2;
+            });
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging1 = false;
+        isDragging2 = false;
+    });
+}
+
 // Adds filters to filterOptions
 function addFilters() {
     addMoonToggle();
+    const keys = Object.keys(planetaryData.mercury).filter(key => !isNaN(parseFloat(planetaryData.mercury[key])));
+    keys.forEach(key => {
+        if (key == "surfacePressure") return;
+        const title = makeTitleFromKey(key);
+        createSlider(title, key, planetaryData);
+    });
 }
 
 function toggleFilterOptions() {
@@ -365,36 +429,14 @@ function toggleFilterOptions() {
     }
 }
 
-// This adds cards and filters when the page is first loaded
-document.addEventListener("DOMContentLoaded", addCards);
-document.addEventListener("DOMContentLoaded", addFilters);
-
-function toggleMoonCard() {
-    if (!planetaryData["moon"]) {
-        planetaryData["moon"] = {
-            mass: "0.073",
-            diameter: "3474.2",
-            density: "3340",
-            gravity: "1.6",
-            escapeVelocity: "2.4",
-            rotationPeriod: "655.7",
-            dayLength: "708.7",
-            distanceFromSun: "0.384",
-            perihelion: "0.363",
-            aphelion: "0.406",
-            orbitalPeriod: "27.3",
-            orbitalVelocity: "1.0",
-            orbitalInclination: "5.1",
-            orbitalEccentricity: "0.055",
-            obliquityToOrbit: "6.7",
-            meanTemperature: "-20",
-            surfacePressure: "0",
-            moonCount: "0",
-            hasRingSystem: false,
-            hasGlobalMagneticField: false,
-        };
+function toggleMoonCard(event) {
+    if (event.target.checked) {
+        addCards();
     } else {
-        delete planetaryData["moon"];
+        addCards(([key, _]) => key !== "moon");
     }
-    addCards(); // Refresh the cards to reflect the change
 }
+
+// This adds cards and filters when the page is first loaded
+document.addEventListener("DOMContentLoaded", () => addCards());
+document.addEventListener("DOMContentLoaded", () => addFilters());
